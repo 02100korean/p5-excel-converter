@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>직영 사전교육자 명단 변환기</title>
-    <!-- 엑셀 생성 및 파일 다운로드 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -19,12 +18,12 @@
         .btn-green.active { opacity: 1; cursor: pointer; }
         .btn-green.active:hover { background-color: #218838; }
         
-        /* 테이블 (미리보기) 디자인 */
         .table-responsive { overflow-x: auto; margin-top: 25px; display: block; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 13px; background-color: #fff; }
         th, td { border: 1px solid #bbb; padding: 10px 8px; text-align: center; height: 20px; }
         th { background-color: #a9c9e9; color: #111; font-weight: bold; }
         .th-merged { letter-spacing: 2px; }
+        
         td.editable { cursor: text; transition: 0.2s; }
         td.editable:focus { outline: 2px solid #ffc107; background-color: #fff; }
         .help-text { font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; display: block; }
@@ -72,7 +71,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- 초기 로딩 시 자바스크립트로 빈칸 생성 -->
+                <!-- 초기 로딩 시 빈칸 10줄 렌더링 -->
             </tbody>
         </table>
     </div>
@@ -235,7 +234,7 @@
         if(globalData.length === 0) return alert('변환할 데이터가 없습니다.');
         
         try {
-            // 원본 템플릿 로드 (반드시 이 파일이 Github에 업로드 되어 있어야 함)
+            // 가장 안정적이었던 원본 템플릿 파일 지정 (이 파일이 Github에 있어야 합니다)
             const response = await fetch('./DHR_직영사전교육자명단_20260930_1.xlsx'); 
             if(!response.ok) throw new Error('Template file not found.');
             
@@ -251,11 +250,11 @@
             const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
             const titleDateStr = `${maxDateObj.getFullYear()}년 ${String(m).padStart(2,'0')}월 ${String(d).padStart(2,'0')}일 (${days[maxDateObj.getDay()]})`;
             
-            // 기존에 에러를 유발했던 mergeCells 로직을 삭제하고 안전하게 값만 변경
+            // XML 오류 방지를 위해 템플릿의 셀 병합 및 너비를 일절 건드리지 않고 값만 입력
             const titleCell = worksheet.getCell('B2');
             titleCell.value = `[P5] ${titleDateStr} 사전교육명단`;
 
-            let currentRow = 4; // 데이터 입력 시작 행
+            let currentRow = 4;
             globalData.forEach(row => {
                 worksheet.getCell(`B${currentRow}`).value = row.no;
                 worksheet.getCell(`C${currentRow}`).value = row.manager;
@@ -298,16 +297,7 @@
                 currentRow++;
             });
 
-            // 셀 글자 잘림 방지를 위해 열 너비를 안전하게 한 번 더 지정
-            worksheet.getColumn('E').width = 14;   
-            worksheet.getColumn('I').width = 9.6;  
-            worksheet.getColumn('J').width = 9.6;  
-            worksheet.getColumn('K').width = 15;   
-            worksheet.getColumn('L').width = 10;   
-            worksheet.getColumn('M').width = 10;   
-            worksheet.getColumn('N').width = 14;   
-            worksheet.getColumn('O').width = 22;   
-            worksheet.getColumn('P').width = 45;   
+            // ⚠️ 엑셀 구조를 변경하여 파일을 깨뜨리는 모든 코드 삭제 완료 ⚠️
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -325,7 +315,7 @@
 
         } catch (error) {
             console.error(error);
-            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1.xlsx) 파일을 찾을 수 없습니다!\n\n해당 원본 엑셀 파일을 Github 저장소에 업로드 해주셔야 기존 서식이 유지됩니다.");
+            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1.xlsx) 파일을 찾을 수 없습니다!");
         }
     }
 </script>
