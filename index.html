@@ -1,448 +1,319 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사전교육자 명단 엑셀 변환기</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- ExcelJS and FileSaver -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
-    
+    <title>직영 사전교육자 명단 변환기</title>
+    <!-- 엑셀 생성 및 파일 다운로드 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { font-family: 'Malgun Gothic', dotum, sans-serif; background-color: #f4f6f9; padding: 20px; margin: 0; }
+        .container { max-width: 1400px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { color: #333; font-size: 20px; margin-top: 0; }
+        textarea { width: 100%; height: 200px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; resize: vertical; font-size: 14px; margin-bottom: 10px; }
+        .btn { padding: 12px 24px; font-weight: bold; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 10px; transition: 0.2s; }
+        .btn-blue { background-color: #0056b3; }
+        .btn-blue:hover { background-color: #004494; }
+        .btn-green { background-color: #28a745; display: none; }
+        .btn-green:hover { background-color: #218838; }
         
-        /* Table cell editable styling */
-        td[contenteditable="true"] {
-            outline: none;
-            transition: background-color 0.2s;
-        }
-        td[contenteditable="true"]:focus {
-            background-color: #e0f2fe;
-            box-shadow: inset 0 0 0 2px #3b82f6;
-        }
+        /* 테이블 (미리보기) 디자인 */
+        .table-responsive { overflow-x: auto; margin-top: 25px; display: none; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 13px; }
+        th, td { border: 1px solid #bbb; padding: 10px 8px; text-align: center; }
+        th { background-color: #a9c9e9; color: #111; }
+        .th-merged { letter-spacing: 2px; }
+        td.editable { background-color: #fffde7; cursor: text; transition: 0.2s; }
+        td.editable:focus { outline: 2px solid #ffc107; background-color: #fff; }
+        .help-text { font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; display: block; }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.ml-auto{margin-left:auto}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-5{height:1.25rem}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-full{width:100%}.min-w-full{min-width:100%}.max-w-7xl{max-width:80rem}.cursor-not-allowed{cursor:not-allowed}.resize-y{resize:vertical}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-6{gap:1.5rem}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.divide-slate-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(226 232 240 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-50{opacity:0.5}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-green-500:hover{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-blue-50:focus{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:p-6{padding:1.5rem}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.ml-auto{margin-left:auto}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-5{height:1.25rem}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-full{width:100%}.min-w-full{min-width:100%}.max-w-7xl{max-width:80rem}.resize-y{resize:vertical}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-6{gap:1.5rem}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.divide-slate-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(226 232 240 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-green-500:hover{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-blue-50:focus{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:p-6{padding:1.5rem}}</style></head>
-<body class="text-gray-800 antialiased min-h-screen p-4 sm:p-6 flex flex-col items-center">
+</head>
+<body>
 
-    <div class="w-full max-w-7xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
-        <!-- Header -->
-        <div class="bg-slate-800 px-6 py-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-semibold text-white">📋 사전교육자 명단 엑셀 변환기</h1>
-                <p class="text-slate-300 text-sm mt-1">카카오톡 텍스트를 복사해 붙여넣으면 즉시 엑셀로 변환됩니다.</p>
-            </div>
-            <button id="downloadBtn" disabled class="bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-5 rounded shadow transition-colors flex items-center gap-2 opacity-50 cursor-not-allowed">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-                엑셀로 다운로드
-            </button>
-        </div>
-
-        <div class="p-6 flex flex-col gap-6">
-            <!-- Text Input Area -->
-            <div>
-                <label for="rawInput" class="block text-sm font-medium text-slate-700 mb-2">텍스트 데이터 입력</label>
-                <textarea id="rawInput" rows="8" placeholder="1. 성함 : 홍길동
-2. 성별 : 남
-... (양식 텍스트를 여기에 붙여넣으세요)" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-y text-sm font-mono"></textarea>
-                
-                <div class="mt-3 flex justify-between items-center">
-                    <div id="statusMsg" class="text-sm font-medium py-1 px-3 rounded bg-blue-50 text-blue-600 hidden">엑셀 다운로드가 완료되었습니다.</div>
-                    <button id="parseBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition-colors ml-auto">
-                        데이터 변환 및 미리보기 ↓
-                    </button>
-                </div>
-            </div>
-
-            <!-- Table Preview Section -->
-            <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col">
-                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                    <span class="text-sm font-semibold text-slate-700">미리보기 (셀을 클릭하여 직접 수정할 수 있습니다)</span>
-                    <span id="rowCount" class="text-xs bg-slate-200 text-slate-600 py-1 px-2 rounded">0 명</span>
-                </div>
-                <div class="overflow-x-auto" style="max-height: 500px;">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
-                        <thead class="bg-slate-100 sticky top-0 z-10 shadow-sm">
-                            <tr>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">No.</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">담당자</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">현장명</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">사전교육일</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">물산교육일</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성별</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성명</th>
-                                <th colspan="2" class="px-3 py-2 text-center font-medium text-slate-600 border-r">주민번호</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">전화번호</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">은행명</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">예금주</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">관계</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">계좌번호</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">주소</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">숙소사용</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">혈액형</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">기종</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">건설경력</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">하이테크경력</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">장화감경력</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">평택거주</th>
-                                <th class="px-3 py-2 text-center font-medium text-slate-600">특이사항</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="bg-white divide-y divide-slate-100">
-                            <tr id="emptyRow">
-                                <td colspan="23" class="px-3 py-8 text-center text-slate-500">데이터가 없습니다. 텍스트를 입력하고 변환을 진행해주세요.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <h2>📋 직영 사전교육자 명단 자동 변환기</h2>
+    <span class="help-text">카카오톡으로 전달받은 텍스트 양식을 아래 빈칸에 모두 붙여넣고 변환 버튼을 누르세요.</span>
+    
+    <textarea id="inputText" placeholder="1. 성함 : 정다정&#10;2. 성별 : 여&#10;... (이곳에 내용을 붙여넣으세요)"></textarea>
+    
+    <div>
+        <button class="btn btn-blue" onclick="processText()">데이터 변환 및 미리보기</button>
+        <button id="downloadBtn" class="btn btn-green" onclick="downloadExcel()">엑셀 다운로드</button>
     </div>
 
-    <script>
-        const rawInput = document.getElementById('rawInput');
-        const parseBtn = document.getElementById('parseBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const tableBody = document.getElementById('tableBody');
-        const rowCount = document.getElementById('rowCount');
-        const statusMsg = document.getElementById('statusMsg');
+    <div class="table-responsive" id="tableContainer">
+        <table id="previewTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">No.</th>
+                    <th rowspan="2">담당자<br>(수정가능)</th>
+                    <th rowspan="2">현장명<br>(수정가능)</th>
+                    <th rowspan="2">사전교육일</th>
+                    <th rowspan="2">물산교육일</th>
+                    <th rowspan="2">성별</th>
+                    <th rowspan="2">성명</th>
+                    <th colspan="2" class="th-merged">주민번호</th>
+                    <th rowspan="2">전화번호</th>
+                    <th rowspan="2">은행명</th>
+                    <th rowspan="2">예금주</th>
+                    <th rowspan="2">예금주와 관계</th>
+                    <th rowspan="2">계좌번호</th>
+                    <th rowspan="2">주소</th>
+                    <th rowspan="2">숙소사용</th>
+                    <th rowspan="2">혈액형</th>
+                    <th rowspan="2">기종</th>
+                    <th rowspan="2">건설경력</th>
+                    <th rowspan="2">하이테크경력</th>
+                    <th rowspan="2">장화감 경력</th>
+                    <th rowspan="2">평택거주</th>
+                    <th rowspan="2">특이사항<br>(수정가능)</th>
+                </tr>
+                <tr>
+                    <th style="font-size: 11px; font-weight: normal; background-color: #cde0f5;">앞자리</th>
+                    <th style="font-size: 11px; font-weight: normal; background-color: #cde0f5;">뒷자리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 데이터가 여기에 삽입됩니다 -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        const emptyRow = document.createElement('tr');
-        emptyRow.id = 'emptyRow';
-        emptyRow.innerHTML = '<td colspan="23" class="px-3 py-8 text-center text-slate-500">데이터가 없습니다. 텍스트를 입력하고 변환을 진행해주세요.</td>';
+<script>
+    let globalData = [];
+    let maxDateObj = new Date(0);
 
-        function showMsg(msg, isError = false) {
-            statusMsg.textContent = msg;
-            statusMsg.className = `text-sm font-medium py-1 px-3 rounded ${isError ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`;
-            statusMsg.classList.remove('hidden');
-            setTimeout(() => statusMsg.classList.add('hidden'), 4000);
-        }
+    // 텍스트 파싱 및 미리보기 테이블 생성
+    function processText() {
+        const text = document.getElementById('inputText').value;
+        if (!text.trim()) return alert("변환할 텍스트를 입력해주세요.");
 
-        function parseDateString(dateStr) {
-            const match = dateStr.match(/(\d+)월\s*(\d+)일/);
-            if (match) {
-                const month = match[1].padStart(2, '0');
-                const day = match[2].padStart(2, '0');
-                return `2026-${month}-${day}`;
-            }
-            return dateStr;
-        }
+        // 줄바꿈 공백 등으로 사람 구분
+        const people = text.split(/\n\s*\n\s*\n|\n\s*\n/).filter(p => p.trim().length > 0);
+        globalData = [];
+        maxDateObj = new Date(0);
 
-        function getKoreanDayOfWeek(dateStr) {
-            try {
-                const date = new Date(dateStr);
-                const days = ['일', '월', '화', '수', '목', '금', '토'];
-                return days[date.getDay()];
-            } catch(e) {
-                return '';
-            }
-        }
+        people.forEach((pStr, index) => {
+            const lines = pStr.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let dataMap = {};
+            let currentKey = "";
 
-        parseBtn.addEventListener('click', () => {
-            const text = rawInput.value.trim();
-            if (!text) {
-                showMsg('입력된 텍스트가 없습니다.', true);
-                return;
-            }
-
-            try {
-                // Split text into individual blocks per person
-                const blocks = text.split(/(?=1\.\s*성함\s*:)/).filter(b => b.trim().length > 0);
-                tableBody.innerHTML = ''; 
-                let parsedCount = 0;
-
-                blocks.forEach((block, index) => {
-                    const extract = (regex) => {
-                        const match = block.match(regex);
-                        return match ? match[1].trim() : '';
-                    };
-
-                    const name = extract(/1\.\s*성함\s*:\s*([^\n\r]+)/);
-                    if (!name) return; 
-
-                    let gender = extract(/2\.\s*성별\s*:\s*([^\n\r]+)/);
-                    gender = gender.includes('여') ? '여' : (gender.includes('남') ? '남' : gender);
-
-                    // Split SSN into two strings
-                    let ssn1 = '', ssn2 = '';
-                    const ssnMatch = block.match(/4\.\s*주민번호.*?\s*:\s*(\d{6})\s*-\s*(\d{7})/);
-                    if (ssnMatch) {
-                        ssn1 = ssnMatch[1];
-                        ssn2 = ssnMatch[2];
-                    }
-
-                    const phone = extract(/5\.\s*연락처\s*:\s*([^\n\r]+)/);
-                    const address = extract(/6\.\s*주소\s*:\s*([^\n\r]+)/);
-                    const pyeongtaek = address.includes('평택') ? 'O' : 'X';
-                    
-                    let blood = extract(/7\.\s*혈액형\s*:\s*([^\n\r]+)/);
-                    blood = blood ? (blood.toUpperCase().startsWith('RH+') ? blood : `RH+${blood.toUpperCase()}`) : '';
-
-                    const phoneModel = extract(/8\.\s*핸드폰기종\s*:\s*([^\n\r]+)/);
-                    
-                    // Bank Parsing
-                    const rawBank = extract(/10\.\s*계좌번호.*?\s*:\s*([^\n\r]+)/);
-                    let bankName = '', accountNum = '';
-                    if (rawBank) {
-                        const bMatch = rawBank.match(/^(.*?)\s+([\d-]+)$/);
-                        if (bMatch) {
-                            bankName = bMatch[1].replace(/\s+/g, ''); // Remove all spaces
-                            if (bankName.includes('카카오')) bankName = '카카오'; // Normalize Kakao Bank
-                            accountNum = bMatch[2];
-                        } else {
-                            bankName = rawBank.replace(/\s+/g, '');
-                        }
-                    }
-
-                    let accomm = extract(/12\.\s*숙소or출퇴근\s*:\s*([^\n\r]+)/);
-                    accomm = accomm.includes('숙소') ? 'O' : 'X';
-
-                    let availDate = extract(/13\.\s*투입가능일자\s*:\s*([^\n\r]+)/);
-                    availDate = parseDateString(availDate);
-
-                    const fwExp = extract(/15\.\s*화기감시자\s*경력\s*:\s*([^\n\r]+)/);
-                    const ssExp = extract(/16\.\s*삼성건설현장경력\s*:\s*([^\n\r]+)/);
-                    const otherExp = extract(/17\.\s*타건설현장경?력\s*:\s*([^\n\r]+)/);
-
-                    const rowData = [
-                        index + 1,        // No.
-                        "송상엽",         // 담당자 (Default)
-                        "P5",             // 현장명 (Default)
-                        availDate,        // 사전교육일
-                        "",               // 물산교육일 (Blank)
-                        gender,           // 성별
-                        name,             // 성명
-                        ssn1,             // 주민번호 앞
-                        ssn2,             // 주민번호 뒤
-                        phone,            // 전화번호
-                        bankName,         // 은행명
-                        name,             // 예금주
-                        "본인",           // 관계
-                        accountNum,       // 계좌번호
-                        address,          // 주소
-                        accomm,           // 숙소사용
-                        blood,            // 혈액형
-                        phoneModel,       // 기종
-                        otherExp,         // 건설경력
-                        ssExp,            // 하이테크경력
-                        fwExp,            // 장화감경력
-                        pyeongtaek,       // 평택거주
-                        ""                // 특이사항 (Blank)
-                    ];
-
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-blue-50 transition-colors";
-                    
-                    rowData.forEach((val, colIdx) => {
-                        const td = document.createElement('td');
-                        td.className = "px-3 py-2 border-r border-slate-100 focus:bg-blue-50";
-                        td.textContent = val;
-                        td.contentEditable = "true";
-                        
-                        // Left align for Address (index 14)
-                        if (colIdx === 14) td.classList.add('text-left');
-                        else td.classList.add('text-center');
-
-                        tr.appendChild(td);
-                    });
-
-                    tableBody.appendChild(tr);
-                    parsedCount++;
-                });
-
-                if (parsedCount > 0) {
-                    rowCount.textContent = `${parsedCount} 명`;
-                    downloadBtn.disabled = false;
-                    downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    showMsg('성공적으로 변환되었습니다. 내용을 확인 및 수정 후 다운로드하세요.');
-                } else {
-                    tableBody.appendChild(emptyRow);
-                    showMsg('변환할 데이터를 찾지 못했습니다. 양식을 확인해주세요.', true);
+            lines.forEach(line => {
+                // "1. 성함 : 홍길동" 또는 "1.성함:홍길동" 형태 매칭
+                const match = line.match(/^(\d+)\.\s*([^:]+)\s*:\s*(.*)/);
+                if (match) {
+                    currentKey = match[2].trim();
+                    dataMap[currentKey] = match[3].trim();
+                } else if (currentKey) {
+                    dataMap[currentKey] += " " + line; // 내용이 다음 줄로 넘어간 경우 (예: 주민번호, 계좌번호)
                 }
+            });
 
-            } catch (err) {
-                showMsg('데이터 변환 중 오류가 발생했습니다.', true);
-                console.error(err);
+            // 데이터 정제
+            const name = dataMap['성함'] || '';
+            const gender = (dataMap['성별'] || '').includes('여') ? '여' : '남';
+            
+            // 주민번호 하이픈 제거 후 앞/뒤 분리
+            const juminRaw = (dataMap['주민번호(뒷자리포함)'] || dataMap['주민번호'] || '').replace(/[^0-9]/g, '');
+            const jumin1 = juminRaw.substring(0, 6);
+            const jumin2 = juminRaw.substring(6, 13);
+            
+            const phone = dataMap['연락처'] || '';
+            
+            // 계좌번호 추출
+            const accRaw = dataMap['계좌번호(본인)'] || dataMap['계좌번호'] || '';
+            const bankMatch = accRaw.match(/^([가-힣]+은행|[가-힣]+뱅크|[가-힣]+)/);
+            let bank = bankMatch ? bankMatch[1].replace('은행', '은행').replace('카카오뱅크', '카카오') : '';
+            const accNum = accRaw.replace(/[^\d-]/g, '').replace(/^-+|-+$/g, '');
+
+            const address = dataMap['주소'] || '';
+            const isPyeongtaek = address.includes('평택') ? 'O' : 'X';
+            const isDorm = (dataMap['숙소or출퇴근'] || '').includes('숙소') ? 'O' : 'X';
+            const bloodRaw = dataMap['혈액형'] || '';
+            const blood = bloodRaw ? 'RH+' + bloodRaw.toUpperCase().replace('RH+', '') : '';
+
+            // 날짜 계산 (투입가능일자 중 가장 늦은 날짜 찾기)
+            const dateStr = dataMap['투입가능일자'] || '';
+            let parsedDate = new Date();
+            const dateMatch = dateStr.match(/(\d+)월\s*(\d+)일/);
+            if(dateMatch) {
+                const y = new Date().getFullYear();
+                parsedDate = new Date(y, parseInt(dateMatch[1])-1, parseInt(dateMatch[2]));
+                if (parsedDate > maxDateObj) maxDateObj = parsedDate;
             }
+
+            globalData.push({
+                no: index + 1,
+                manager: '송상엽',
+                site: 'P5',
+                eduDate: dateStr,
+                eduDateObj: parsedDate,
+                gender: gender,
+                name: name,
+                jumin1: jumin1,
+                jumin2: jumin2,
+                phone: phone,
+                bank: bank,
+                accName: name, // 예금주
+                accRel: '본인',
+                accNum: accNum,
+                address: address,
+                dorm: isDorm,
+                blood: blood,
+                phoneModel: dataMap['핸드폰기종'] || '',
+                expCon: dataMap['타건설현장경력'] || '',
+                expHigh: dataMap['삼성건설현장경력'] || '',
+                expFire: dataMap['화기감시자 경력'] || '',
+                pyeongtaek: isPyeongtaek,
+                note: '' // 불필요 항목 제외 및 특이사항 비워둠 (직접 입력 가능)
+            });
         });
 
-        downloadBtn.addEventListener('click', async () => {
-            try {
-                showMsg('엑셀 파일을 생성 중입니다...');
-                
-                const rows = Array.from(tableBody.querySelectorAll('tr'));
-                if (rows.length === 0 || rows[0].id === 'emptyRow') return;
+        renderTable();
+    }
 
-                // Extract data directly from the table to include manual user edits
-                const dataMatrix = rows.map(tr => {
-                    const cells = Array.from(tr.querySelectorAll('td'));
-                    return cells.map(td => td.innerText.trim());
-                });
+    function renderTable() {
+        const tbody = document.querySelector('#previewTable tbody');
+        tbody.innerHTML = '';
+        
+        if(globalData.length > 0) {
+            document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+        }
 
-                // Find the latest date for filename/title
-                let latestDateObj = null;
-                let latestDateStr = '';
-                
-                dataMatrix.forEach(row => {
-                    const dStr = row[3]; // YYYY-MM-DD
-                    if (dStr) {
-                        const dObj = new Date(dStr);
-                        if (!latestDateObj || dObj > latestDateObj) {
-                            latestDateObj = dObj;
-                            latestDateStr = dStr;
-                        }
-                    }
-                });
-
-                let fileDateSuffix = 'YYYYMMDD';
-                let sheetName = '시트1';
-                let titleDateStr = 'YYYY년 MM월 DD일 (요일)';
-
-                if (latestDateObj && !isNaN(latestDateObj)) {
-                    const y = latestDateObj.getFullYear();
-                    const m = String(latestDateObj.getMonth() + 1).padStart(2, '0');
-                    const d = String(latestDateObj.getDate()).padStart(2, '0');
-                    const kDay = getKoreanDayOfWeek(latestDateStr);
-
-                    fileDateSuffix = `${y}${m}${d}`;
-                    sheetName = `${latestDateObj.getMonth() + 1}월 ${latestDateObj.getDate()}일`;
-                    titleDateStr = `${y}년 ${m}월 ${d}일 (${kDay}요일)`;
-                }
-
-                const workbook = new ExcelJS.Workbook();
-                const sheet = workbook.addWorksheet(sheetName, {
-                    properties: { tabColor: { argb: 'FFC0000' } },
-                    views: [{ showGridLines: true }]
-                });
-
-                // Define Columns mapping layout: B to X
-                sheet.columns = [
-                    { key: 'A', width: 3 },  // A (1)
-                    { key: 'B', width: 5 },  // B (2) - No.
-                    { key: 'C', width: 10 }, // C (3) - 담당자
-                    { key: 'D', width: 6 },  // D (4) - 현장명
-                    { key: 'E', width: 12 }, // E (5) - 사전교육일
-                    { key: 'F', width: 12 }, // F (6) - 물산교육일
-                    { key: 'G', width: 5 },  // G (7) - 성별
-                    { key: 'H', width: 10 }, // H (8) - 성명
-                    { key: 'I', width: 9 },  // I (9) - 주민번호 앞자리
-                    { key: 'J', width: 9 },  // J (10) - 주민번호 뒷자리
-                    { key: 'K', width: 15 }, // K (11) - 전화번호
-                    { key: 'L', width: 12 }, // L (12) - 은행명
-                    { key: 'M', width: 10 }, // M (13) - 예금주
-                    { key: 'N', width: 20 }, // N (14) - 예금주와 관계 (Width Adjusted)
-                    { key: 'O', width: 20 }, // O (15) - 계좌번호
-                    { key: 'P', width: 45 }, // P (16) - 주소
-                    { key: 'Q', width: 8 },  // Q (17) - 숙소사용
-                    { key: 'R', width: 7 },  // R (18) - 혈액형
-                    { key: 'S', width: 12 }, // S (19) - 기종
-                    { key: 'T', width: 10 }, // T (20) - 건설경력
-                    { key: 'U', width: 10 }, // U (21) - 하이테크경력
-                    { key: 'V', width: 10 }, // V (22) - 장화감경력
-                    { key: 'W', width: 8 },  // W (23) - 평택거주
-                    { key: 'X', width: 20 }, // X (24) - 특이사항
-                ];
-
-                const borderStyle = {
-                    top: { style: 'thin' }, left: { style: 'thin' },
-                    bottom: { style: 'thin' }, right: { style: 'thin' }
-                };
-
-                // Row 1: Spacing
-                sheet.getRow(1).height = 15;
-
-                // Row 2: Title Merge (B2:W2 based on prompt request)
-                const titleRow = sheet.getRow(2);
-                titleRow.height = 30;
-                sheet.mergeCells('B2:W2');
-                const titleCell = sheet.getCell('B2');
-                titleCell.value = `[P5] ${titleDateStr} 사전교육명단`;
-                titleCell.font = { name: '맑은 고딕', size: 14, bold: true };
-                titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-
-                // Row 3: Headers
-                const headers = {
-                    2: "No.", 3: "담당자", 4: "현장명", 5: "사전교육일", 6: "물산교육일", 7: "성별", 8: "성명",
-                    9: "주민번호", /* I and J will be merged */
-                    11: "전화번호", 12: "은행명", 13: "예금주", 14: "예금주와 관계", 15: "계좌번호", 16: "주소",
-                    17: "숙소사용", 18: "혈액형", 19: "기종", 20: "건설경력", 21: "하이테크경력", 22: "장화감 경력",
-                    23: "평택거주", 24: "특이사항"
-                };
-                
-                const headerRow = sheet.getRow(3);
-                headerRow.height = 20;
-
-                // Set values and styles for headers (B to X)
-                for (let c = 2; c <= 24; c++) {
-                    const cell = headerRow.getCell(c);
-                    if (headers[c]) cell.value = headers[c];
-                    
-                    cell.font = { name: '맑은 고딕', size: 10, bold: true };
-                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                    // Apply requested color #A9C9E9
-                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFA9C9E9' } }; 
-                    cell.border = borderStyle;
-                }
-                sheet.mergeCells('I3:J3'); // Merge header for 주민번호
-
-                // Row 4+: Write Data
-                dataMatrix.forEach((rowData, rIdx) => {
-                    const rowNum = rIdx + 4;
-                    const row = sheet.getRow(rowNum);
-                    row.height = 20;
-                    
-                    // Map HTML DOM array data to Excel Column indices
-                    const excelDataMap = {
-                        2: rowData[0],  3: rowData[1],   4: rowData[2],   5: rowData[3],   6: rowData[4],
-                        7: rowData[5],  8: rowData[6],   9: rowData[7],   10: rowData[8],
-                        11: rowData[9], 12: rowData[10], 13: rowData[11], 14: rowData[12], 15: rowData[13],
-                        16: rowData[14],17: rowData[15], 18: rowData[16], 19: rowData[17], 20: rowData[18],
-                        21: rowData[19],22: rowData[20], 23: rowData[21], 24: rowData[22]
-                    };
-
-                    for (let c = 2; c <= 24; c++) {
-                        const cell = row.getCell(c);
-                        if (excelDataMap[c] !== undefined) {
-                            cell.value = excelDataMap[c];
-                        }
-                        
-                        // Set text format for numbers to prevent scientific notation and warnings
-                        if ([9, 10, 11, 15].includes(c)) {
-                            cell.numFmt = '@';
-                        }
-                        
-                        cell.font = { name: '맑은 고딕', size: 10 };
-                        cell.border = borderStyle;
-                        cell.alignment = { vertical: 'middle', horizontal: (c === 16) ? 'left' : 'center' };
-                    }
-                });
-
-                // Generate File
-                const buffer = await workbook.xlsx.writeBuffer();
-                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                
-                const fileName = `DHR_직영사전교육자명단_${fileDateSuffix}.xlsx`;
-                saveAs(blob, fileName);
-
-                showMsg('엑셀 다운로드가 완료되었습니다.');
-                alert('엑셀 다운로드가 완료되었습니다.');
-
-            } catch (error) {
-                showMsg('엑셀 파일 생성 중 오류가 발생했습니다.', true);
-                console.error(error);
-            }
+        globalData.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.no}</td>
+                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'manager', this.innerText)">${row.manager}</td>
+                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'site', this.innerText)">${row.site}</td>
+                <td>${row.eduDate}</td>
+                <td></td>
+                <td>${row.gender}</td>
+                <td>${row.name}</td>
+                <td>${row.jumin1}</td>
+                <td>${row.jumin2}</td>
+                <td>${row.phone}</td>
+                <td>${row.bank}</td>
+                <td>${row.accName}</td>
+                <td>${row.accRel}</td>
+                <td>${row.accNum}</td>
+                <td>${row.address}</td>
+                <td>${row.dorm}</td>
+                <td>${row.blood}</td>
+                <td>${row.phoneModel}</td>
+                <td>${row.expCon}</td>
+                <td>${row.expHigh}</td>
+                <td>${row.expFire}</td>
+                <td>${row.pyeongtaek}</td>
+                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'note', this.innerText)">${row.note}</td>
+            `;
+            tbody.appendChild(tr);
         });
-    </script>
+    }
 
-</body></html>
+    function updateField(index, key, value) {
+        globalData[index][key] = value.trim();
+    }
+
+    // 엑셀 생성 로직 (템플릿 기반)
+    async function downloadExcel() {
+        if(globalData.length === 0) return alert('변환할 데이터가 없습니다.');
+        
+        try {
+            // Github 저장소에 올라가 있는 원본 템플릿 파일 호출
+            const response = await fetch('./DHR_직영사전교육자명단_20260930_1.xlsx');
+            if(!response.ok) throw new Error('Template file not found.');
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(arrayBuffer);
+            const worksheet = workbook.worksheets[0];
+
+            // 1. 시트 이름 변경 (가장 나중 날짜 기준)
+            const m = maxDateObj.getMonth() + 1;
+            const d = maxDateObj.getDate();
+            worksheet.name = `${m}월 ${d}일`;
+
+            // 2. 2행 제목 변경 
+            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const titleDateStr = `${maxDateObj.getFullYear()}년 ${String(m).padStart(2,'0')}월 ${String(d).padStart(2,'0')}일 (${days[maxDateObj.getDay()]})`;
+            worksheet.getCell('B2').value = `[P5] ${titleDateStr} 사전교육명단`;
+
+            // 3. 데이터 입력 (4행부터 시작)
+            let currentRow = 4;
+            globalData.forEach(row => {
+                worksheet.getCell(`B${currentRow}`).value = row.no;
+                worksheet.getCell(`C${currentRow}`).value = row.manager;
+                worksheet.getCell(`D${currentRow}`).value = row.site;
+                worksheet.getCell(`E${currentRow}`).value = row.eduDateObj; // 엑셀 날짜 형식
+                worksheet.getCell(`F${currentRow}`).value = '';
+                worksheet.getCell(`G${currentRow}`).value = row.gender;
+                worksheet.getCell(`H${currentRow}`).value = row.name;
+
+                // 주민번호 숫자->텍스트 강제 변환
+                const cellI = worksheet.getCell(`I${currentRow}`);
+                cellI.value = row.jumin1;
+                cellI.numFmt = '@'; 
+                
+                const cellJ = worksheet.getCell(`J${currentRow}`);
+                cellJ.value = row.jumin2;
+                cellJ.numFmt = '@';
+
+                // 연락처 텍스트 강제 변환
+                const cellK = worksheet.getCell(`K${currentRow}`);
+                cellK.value = row.phone;
+                cellK.numFmt = '@';
+
+                worksheet.getCell(`L${currentRow}`).value = row.bank;
+                worksheet.getCell(`M${currentRow}`).value = row.accName;
+                worksheet.getCell(`N${currentRow}`).value = row.accRel;
+
+                // 계좌번호 텍스트 강제 변환 (초록색 오류 방지)
+                const cellO = worksheet.getCell(`O${currentRow}`);
+                cellO.value = row.accNum;
+                cellO.numFmt = '@';
+
+                worksheet.getCell(`P${currentRow}`).value = row.address;
+                worksheet.getCell(`Q${currentRow}`).value = row.dorm;
+                worksheet.getCell(`R${currentRow}`).value = row.blood;
+                worksheet.getCell(`S${currentRow}`).value = row.phoneModel;
+                worksheet.getCell(`T${currentRow}`).value = row.expCon;
+                worksheet.getCell(`U${currentRow}`).value = row.expHigh;
+                worksheet.getCell(`V${currentRow}`).value = row.expFire;
+                worksheet.getCell(`W${currentRow}`).value = row.pyeongtaek;
+                worksheet.getCell(`X${currentRow}`).value = row.note;
+
+                currentRow++;
+            });
+
+            // 다운로드 시 안전장치로 I열, J열 너비 한번 더 강제 동일화
+            worksheet.getColumn('I').width = 9.6;
+            worksheet.getColumn('J').width = 9.6;
+
+            // 파일 저장 (브라우저 다운로드)
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            
+            const yyyy = maxDateObj.getFullYear();
+            const mm = String(m).padStart(2, '0');
+            const dd = String(d).padStart(2, '0');
+            const fileName = `DHR_직영사전교육자명단_${yyyy}${mm}${dd}.xlsx`;
+            
+            saveAs(blob, fileName);
+
+            // 다운로드 완료 팝업
+            setTimeout(() => {
+                alert('엑셀 다운로드가 완료되었습니다!');
+            }, 500);
+
+        } catch (error) {
+            console.error(error);
+            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1.xlsx) 파일을 찾을 수 없습니다!\n\n해당 원본 엑셀 파일을 Github 저장소에 업로드 해주셔야 기존 서식이 그대로 유지됩니다.");
+        }
+    }
+</script>
+</body>
+</html>
