@@ -19,13 +19,15 @@
         .btn-green.active { opacity: 1; cursor: pointer; }
         .btn-green.active:hover { background-color: #218838; }
         
-        /* 테이블 (미리보기) 디자인 */
+        /* 테이블 (미리보기) 디자인 - 엑셀 템플릿과 동일하게 유지 */
         .table-responsive { overflow-x: auto; margin-top: 25px; display: block; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 13px; background-color: #fff; }
         th, td { border: 1px solid #bbb; padding: 10px 8px; text-align: center; height: 20px; }
-        th { background-color: #a9c9e9; color: #111; }
+        th { background-color: #a9c9e9; color: #111; font-weight: bold; }
         .th-merged { letter-spacing: 2px; }
-        td.editable { background-color: #fffde7; cursor: text; transition: 0.2s; }
+        
+        /* 데이터 셀 색상 제거 (수정 가능한 셀도 테두리 포커스만 적용) */
+        td.editable { cursor: text; transition: 0.2s; }
         td.editable:focus { outline: 2px solid #ffc107; background-color: #fff; }
         .help-text { font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; display: block; }
     </style>
@@ -36,44 +38,40 @@
     <h2>📋 직영 사전교육자 명단 자동 변환기</h2>
     <span class="help-text">카카오톡으로 전달받은 텍스트 양식을 아래 빈칸에 모두 붙여넣고 변환 버튼을 누르세요.</span>
     
-    <textarea id="inputText" placeholder="1. 성함 : 정다정&#10;2. 성별 : 여&#10;... (이곳에 내용을 붙여넣으세요)"></textarea>
+    <textarea id="inputText" placeholder="1. 성함 : &#10;2. 성별 : &#10;3. 나이 : &#10;... (이곳에 내용을 붙여넣으세요)"></textarea>
     
     <div>
         <button class="btn btn-blue" onclick="processText()">데이터 변환 및 미리보기</button>
         <button id="downloadBtn" class="btn btn-green" onclick="downloadExcel()" disabled>엑셀 다운로드</button>
     </div>
 
-    <!-- 초기 화면부터 표가 노출되도록 변경 -->
+    <!-- 초기 화면부터 표가 노출되며 소제목 행 삭제됨 -->
     <div class="table-responsive" id="tableContainer">
         <table id="previewTable">
             <thead>
                 <tr>
-                    <th rowspan="2">No.</th>
-                    <th rowspan="2">담당자<br>(수정가능)</th>
-                    <th rowspan="2">현장명<br>(수정가능)</th>
-                    <th rowspan="2">사전교육일</th>
-                    <th rowspan="2">물산교육일</th>
-                    <th rowspan="2">성별</th>
-                    <th rowspan="2">성명</th>
+                    <th>No.</th>
+                    <th>담당자<br>(수정가능)</th>
+                    <th>현장명<br>(수정가능)</th>
+                    <th>사전교육일</th>
+                    <th>물산교육일</th>
+                    <th>성별</th>
+                    <th>성명</th>
                     <th colspan="2" class="th-merged">주민번호</th>
-                    <th rowspan="2">전화번호</th>
-                    <th rowspan="2">은행명</th>
-                    <th rowspan="2">예금주</th>
-                    <th rowspan="2">예금주와 관계</th>
-                    <th rowspan="2">계좌번호</th>
-                    <th rowspan="2">주소</th>
-                    <th rowspan="2">숙소사용</th>
-                    <th rowspan="2">혈액형</th>
-                    <th rowspan="2">기종</th>
-                    <th rowspan="2">건설경력</th>
-                    <th rowspan="2">하이테크경력</th>
-                    <th rowspan="2">장화감 경력</th>
-                    <th rowspan="2">평택거주</th>
-                    <th rowspan="2">특이사항<br>(수정가능)</th>
-                </tr>
-                <tr>
-                    <th style="font-size: 11px; font-weight: normal; background-color: #cde0f5;">앞자리</th>
-                    <th style="font-size: 11px; font-weight: normal; background-color: #cde0f5;">뒷자리</th>
+                    <th>전화번호</th>
+                    <th>은행명</th>
+                    <th>예금주</th>
+                    <th>예금주와 관계</th>
+                    <th>계좌번호</th>
+                    <th>주소</th>
+                    <th>숙소사용</th>
+                    <th>혈액형</th>
+                    <th>기종</th>
+                    <th>건설경력</th>
+                    <th>하이테크경력</th>
+                    <th>장화감 경력</th>
+                    <th>평택거주</th>
+                    <th>특이사항<br>(수정가능)</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +85,7 @@
     let globalData = [];
     let maxDateObj = new Date(0);
 
-    // 초기 화면 로딩 시 1~10번까지의 빈 표를 그려주는 함수
+    // 초기 화면 로딩 시 1~10번까지의 빈 표를 그려주는 함수 (샘플 데이터 없음)
     window.onload = function() {
         const tbody = document.querySelector('#previewTable tbody');
         tbody.innerHTML = '';
@@ -110,7 +108,6 @@
         const text = document.getElementById('inputText').value;
         if (!text.trim()) return alert("변환할 텍스트를 입력해주세요.");
 
-        // 빈 줄 기준이 아니라 무조건 '1. 성함'을 기준으로 사람을 나눔 (데이터 쪼개짐 방지)
         const people = text.split(/(?=1\.\s*성함\s*:)/).filter(p => p.trim().length > 0);
         globalData = [];
         maxDateObj = new Date(0);
@@ -126,12 +123,10 @@
                     currentKey = match[2].trim();
                     dataMap[currentKey] = match[3].trim();
                 } else if (currentKey) {
-                    // 항목의 내용이 줄바꿈되어 다음 줄에 있는 경우
                     dataMap[currentKey] += " " + line; 
                 }
             });
 
-            // 데이터 정제
             const name = dataMap['성함'] || '';
             const gender = (dataMap['성별'] || '').includes('여') ? '여' : '남';
             
@@ -236,13 +231,13 @@
         globalData[index][key] = value.trim();
     }
 
-    // 엑셀 생성 로직 (원본 템플릿 기반)
+    // 엑셀 생성 로직 (새로운 원본 템플릿 기반)
     async function downloadExcel() {
         if(globalData.length === 0) return alert('변환할 데이터가 없습니다.');
         
         try {
-            // Github 저장소의 원본 파일 로드
-            const response = await fetch('./DHR_직영사전교육자명단_20260930_1.xlsx');
+            // Github 저장소의 "새로운" 원본 파일 로드
+            const response = await fetch('./DHR_직영사전교육자명단_20260930_1_2.xlsx');
             if(!response.ok) throw new Error('Template file not found.');
             
             const arrayBuffer = await response.arrayBuffer();
@@ -320,7 +315,7 @@
 
         } catch (error) {
             console.error(error);
-            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1.xlsx) 파일을 찾을 수 없습니다!\n\n해당 원본 엑셀 파일을 Github 저장소에 업로드 해주셔야 기존 서식이 유지됩니다.");
+            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1_2.xlsx) 파일을 찾을 수 없습니다!\n\n해당 원본 엑셀 파일을 Github 저장소에 업로드 해주셔야 기존 서식이 유지됩니다.");
         }
     }
 </script>
