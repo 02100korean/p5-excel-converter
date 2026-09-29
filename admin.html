@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사전교육자 명단 엑셀 변환기</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ExcelJS and FileSaver -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Table cell editable styling */
+        td[contenteditable="true"] {
+            outline: none;
+            transition: background-color 0.2s;
+        }
+        td[contenteditable="true"]:focus {
+            background-color: #e0f2fe;
+            box-shadow: inset 0 0 0 2px #3b82f6;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.ml-auto{margin-left:auto}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-5{height:1.25rem}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-full{width:100%}.min-w-full{min-width:100%}.max-w-7xl{max-width:80rem}.cursor-not-allowed{cursor:not-allowed}.resize-y{resize:vertical}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-6{gap:1.5rem}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.divide-slate-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(226 232 240 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-50{opacity:0.5}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-green-500:hover{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-blue-50:focus{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:p-6{padding:1.5rem}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.ml-auto{margin-left:auto}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-5{height:1.25rem}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-full{width:100%}.min-w-full{min-width:100%}.max-w-7xl{max-width:80rem}.resize-y{resize:vertical}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-6{gap:1.5rem}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.divide-slate-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(226 232 240 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-green-500:hover{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-blue-50:focus{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:p-6{padding:1.5rem}}</style></head>
+<body class="text-gray-800 antialiased min-h-screen p-4 sm:p-6 flex flex-col items-center">
+
+    <div class="w-full max-w-7xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-slate-800 px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-semibold text-white">📋 사전교육자 명단 엑셀 변환기</h1>
+                <p class="text-slate-300 text-sm mt-1">카카오톡 텍스트를 복사해 붙여넣으면 즉시 엑셀로 변환됩니다.</p>
+            </div>
+            <button id="downloadBtn" class="bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-5 rounded shadow transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                엑셀로 다운로드
+            </button>
+        </div>
+
+        <div class="p-6 flex flex-col gap-6">
+            <!-- Text Input Area -->
+            <div>
+                <label for="rawInput" class="block text-sm font-medium text-slate-700 mb-2">텍스트 데이터 입력</label>
+                <textarea id="rawInput" rows="8" placeholder="1. 성함 : 홍길동
+2. 성별 : 남
+... (양식 텍스트를 여기에 붙여넣으세요)" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-y text-sm font-mono"></textarea>
+                
+                <div class="mt-3 flex justify-between items-center">
+                    <div id="statusMsg" class="text-sm font-medium py-1 px-3 rounded bg-blue-50 text-blue-600 hidden">엑셀 다운로드가 완료되었습니다.</div>
+                    <button id="parseBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition-colors ml-auto">
+                        데이터 변환 및 미리보기 ↓
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Preview Section -->
+            <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col">
+                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                    <span class="text-sm font-semibold text-slate-700">미리보기 (셀을 클릭하여 직접 수정할 수 있습니다)</span>
+                    <span id="rowCount" class="text-xs bg-slate-200 text-slate-600 py-1 px-2 rounded">5 명</span>
+                </div>
+                <div class="overflow-x-auto" style="max-height: 500px;">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">No.</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">담당자</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">현장명</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">사전교육일</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">물산교육일</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성별</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성명</th>
+                                <th colspan="2" class="px-3 py-2 text-center font-medium text-slate-600 border-r">주민번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">전화번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">은행명</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">예금주</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">관계</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">계좌번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">주소</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">숙소사용</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">혈액형</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">기종</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">건설경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">하이테크경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">장화감경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">평택거주</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600">특이사항</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white divide-y divide-slate-100"><tr class="hover:bg-blue-50 transition-colors"><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">1</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">송상엽</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">P5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2026-10-01</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">여</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">정다정</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">930906</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2117211</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">010-6660-0856</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">국민은행</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">정다정</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">본인</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">55660201723171</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-left" contenteditable="true">부산광역시 수영구 남천동 49-14</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">RH+O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">아이폰</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">ㄴㅇㄹ</td></tr><tr class="hover:bg-blue-50 transition-colors"><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">송상엽</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">P5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2026-10-01</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">남</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">유현수</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">851225</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">1114431</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">010-4493-2450</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">우체국</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">유현수</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">본인</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">110-0134-49942</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-left" contenteditable="true">부산시 부산진구 신암로5번길 10 DS빌 501호</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">RH+A</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">삼성</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">ㄴㅇㄹ</td></tr><tr class="hover:bg-blue-50 transition-colors"><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">3</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">송상엽</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">P5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2026-10-01</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">여</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">김예림</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">981211</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2340412</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">010-4487-9812</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">카카오</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">김예림</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">본인</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">3333-05-9769376</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-left" contenteditable="true">부산시 해운대구 신반송로200 주공아파트 107동 303호</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">RH+A</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">삼성</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">ㅇㄴㄹ</td></tr><tr class="hover:bg-blue-50 transition-colors"><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">4</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">송상엽</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">P5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2026-10-01</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">여</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">강지영</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">721209</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2565712</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">010-4917-5061</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">농협</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">강지영</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">본인</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">601109-56-011203</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-left" contenteditable="true">경기도 오산시 외삼미동627-3  102호</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">RH+A</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">삼성</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">5년</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td></tr><tr class="hover:bg-blue-50 transition-colors"><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">송상엽</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">P5</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2026-10-01</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">여</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">고경애</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">730414</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">2047015</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">010-4604-2258</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">카카오</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">고경애</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">본인</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">3333325115211</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-left" contenteditable="true">경기도 평택시 서정역로 58번길 19 405호</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">X</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">RH+O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">삼성</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">무</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true">O</td><td class="px-3 py-2 border-r border-slate-100 focus:bg-blue-50 text-center" contenteditable="true"></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawInput = document.getElementById('rawInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const tableBody = document.getElementById('tableBody');
+        const emptyRow = document.getElementById('emptyRow');
+        const rowCount = document.getElementById('rowCount');
+        const statusMsg = document.getElementById('statusMsg');
+
+        function showMsg(msg, isError = false) {
+            statusMsg.textContent = msg;
+            statusMsg.className = `text-sm font-medium py-1 px-3 rounded ${isError ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`;
+            statusMsg.classList.remove('hidden');
+            setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+        }
+
+        function parseDateString(dateStr) {
+            const match = dateStr.match(/(\d+)월\s*(\d+)일/);
+            if (match) {
+                const month = match[1].padStart(2, '0');
+                const day = match[2].padStart(2, '0');
+                return `2026-${month}-${day}`;
+            }
+            return dateStr;
+        }
+
+        function getKoreanDayOfWeek(dateStr) {
+            try {
+                const date = new Date(dateStr);
+                const days = ['일', '월', '화', '수', '목', '금', '토'];
+                return days[date.getDay()];
+            } catch(e) {
+                return '';
+            }
+        }
+
+        parseBtn.addEventListener('click', () => {
+            const text = rawInput.value.trim();
+            if (!text) {
+                showMsg('입력된 텍스트가 없습니다.', true);
+                return;
+            }
+
+            try {
+                // Split text into individual blocks per person
+                const blocks = text.split(/(?=1\.\s*성함\s*:)/).filter(b => b.trim().length > 0);
+                tableBody.innerHTML = ''; 
+                let parsedCount = 0;
+
+                blocks.forEach((block, index) => {
+                    const extract = (regex) => {
+                        const match = block.match(regex);
+                        return match ? match[1].trim() : '';
+                    };
+
+                    const name = extract(/1\.\s*성함\s*:\s*([^\n\r]+)/);
+                    if (!name) return; 
+
+                    let gender = extract(/2\.\s*성별\s*:\s*([^\n\r]+)/);
+                    gender = gender.includes('여') ? '여' : (gender.includes('남') ? '남' : gender);
+
+                    // Split SSN into two strings
+                    let ssn1 = '', ssn2 = '';
+                    const ssnMatch = block.match(/4\.\s*주민번호.*?\s*:\s*(\d{6})\s*-\s*(\d{7})/);
+                    if (ssnMatch) {
+                        ssn1 = ssnMatch[1];
+                        ssn2 = ssnMatch[2];
+                    }
+
+                    const phone = extract(/5\.\s*연락처\s*:\s*([^\n\r]+)/);
+                    const address = extract(/6\.\s*주소\s*:\s*([^\n\r]+)/);
+                    const pyeongtaek = address.includes('평택') ? 'O' : 'X';
+                    
+                    let blood = extract(/7\.\s*혈액형\s*:\s*([^\n\r]+)/);
+                    blood = blood ? (blood.toUpperCase().startsWith('RH+') ? blood : `RH+${blood.toUpperCase()}`) : '';
+
+                    const phoneModel = extract(/8\.\s*핸드폰기종\s*:\s*([^\n\r]+)/);
+                    
+                    // Bank Parsing
+                    const rawBank = extract(/10\.\s*계좌번호.*?\s*:\s*([^\n\r]+)/);
+                    let bankName = '', accountNum = '';
+                    if (rawBank) {
+                        const bMatch = rawBank.match(/^(.*?)\s+([\d-]+)$/);
+                        if (bMatch) {
+                            bankName = bMatch[1].replace(/\s+/g, ''); // Remove all spaces
+                            if (bankName.includes('카카오')) bankName = '카카오'; // Normalize Kakao Bank
+                            accountNum = bMatch[2];
+                        } else {
+                            bankName = rawBank.replace(/\s+/g, '');
+                        }
+                    }
+
+                    let accomm = extract(/12\.\s*숙소or출퇴근\s*:\s*([^\n\r]+)/);
+                    accomm = accomm.includes('숙소') ? 'O' : 'X';
+
+                    let availDate = extract(/13\.\s*투입가능일자\s*:\s*([^\n\r]+)/);
+                    availDate = parseDateString(availDate);
+
+                    const fwExp = extract(/15\.\s*화기감시자\s*경력\s*:\s*([^\n\r]+)/);
+                    const ssExp = extract(/16\.\s*삼성건설현장경력\s*:\s*([^\n\r]+)/);
+                    const otherExp = extract(/17\.\s*타건설현장경?력\s*:\s*([^\n\r]+)/);
+
+                    const rowData = [
+                        index + 1,        // No.
+                        "송상엽",         // 담당자 (Default)
+                        "P5",             // 현장명 (Default)
+                        availDate,        // 사전교육일
+                        "",               // 물산교육일 (Blank)
+                        gender,           // 성별
+                        name,             // 성명
+                        ssn1,             // 주민번호 앞
+                        ssn2,             // 주민번호 뒤
+                        phone,            // 전화번호
+                        bankName,         // 은행명
+                        name,             // 예금주
+                        "본인",           // 관계
+                        accountNum,       // 계좌번호
+                        address,          // 주소
+                        accomm,           // 숙소사용
+                        blood,            // 혈액형
+                        phoneModel,       // 기종
+                        otherExp,         // 건설경력
+                        ssExp,            // 하이테크경력
+                        fwExp,            // 장화감경력
+                        pyeongtaek,       // 평택거주
+                        ""                // 특이사항 (Blank)
+                    ];
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50 transition-colors";
+                    
+                    rowData.forEach((val, colIdx) => {
+                        const td = document.createElement('td');
+                        td.className = "px-3 py-2 border-r border-slate-100 focus:bg-blue-50";
+                        td.textContent = val;
+                        td.contentEditable = "true";
+                        
+                        // Left align for Address (index 14)
+                        if (colIdx === 14) td.classList.add('text-left');
+                        else td.classList.add('text-center');
+
+                        tr.appendChild(td);
+                    });
+
+                    tableBody.appendChild(tr);
+                    parsedCount++;
+                });
+
+                if (parsedCount > 0) {
+                    rowCount.textContent = `${parsedCount} 명`;
+                    downloadBtn.disabled = false;
+                    downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    showMsg('성공적으로 변환되었습니다. 내용을 확인 및 수정 후 다운로드하세요.');
+                } else {
+                    tableBody.appendChild(emptyRow);
+                    showMsg('변환할 데이터를 찾지 못했습니다. 양식을 확인해주세요.', true);
+                }
+
+            } catch (err) {
+                showMsg('데이터 변환 중 오류가 발생했습니다.', true);
+                console.error(err);
+            }
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            try {
+                showMsg('엑셀 파일을 생성 중입니다...');
+                
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                if (rows.length === 0 || rows[0].id === 'emptyRow') return;
+
+                // Extract data directly from the table to include manual user edits
+                const dataMatrix = rows.map(tr => {
+                    const cells = Array.from(tr.querySelectorAll('td'));
+                    return cells.map(td => td.innerText.trim());
+                });
+
+                // Find the latest date for filename/title
+                let latestDateObj = null;
+                let latestDateStr = '';
+                
+                dataMatrix.forEach(row => {
+                    const dStr = row[3]; // YYYY-MM-DD
+                    if (dStr) {
+                        const dObj = new Date(dStr);
+                        if (!latestDateObj || dObj > latestDateObj) {
+                            latestDateObj = dObj;
+                            latestDateStr = dStr;
+                        }
+                    }
+                });
+
+                let fileDateSuffix = 'YYYYMMDD';
+                let sheetName = '시트1';
+                let titleDateStr = 'YYYY년 MM월 DD일 (요일)';
+
+                if (latestDateObj && !isNaN(latestDateObj)) {
+                    const y = latestDateObj.getFullYear();
+                    const m = String(latestDateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(latestDateObj.getDate()).padStart(2, '0');
+                    const kDay = getKoreanDayOfWeek(latestDateStr);
+
+                    fileDateSuffix = `${y}${m}${d}`;
+                    sheetName = `${latestDateObj.getMonth() + 1}월 ${latestDateObj.getDate()}일`;
+                    titleDateStr = `${y}년 ${m}월 ${d}일 (${kDay}요일)`;
+                }
+
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet(sheetName, {
+                    properties: { tabColor: { argb: 'FFC0000' } },
+                    views: [{ showGridLines: true }]
+                });
+
+                // Define Columns mapping layout: B to X
+                sheet.columns = [
+                    { key: 'A', width: 3 },  // A (1)
+                    { key: 'B', width: 5 },  // B (2) - No.
+                    { key: 'C', width: 10 }, // C (3) - 담당자
+                    { key: 'D', width: 6 },  // D (4) - 현장명
+                    { key: 'E', width: 12 }, // E (5) - 사전교육일
+                    { key: 'F', width: 12 }, // F (6) - 물산교육일
+                    { key: 'G', width: 5 },  // G (7) - 성별
+                    { key: 'H', width: 10 }, // H (8) - 성명
+                    { key: 'I', width: 9 },  // I (9) - 주민번호 앞자리
+                    { key: 'J', width: 9 },  // J (10) - 주민번호 뒷자리
+                    { key: 'K', width: 15 }, // K (11) - 전화번호
+                    { key: 'L', width: 12 }, // L (12) - 은행명
+                    { key: 'M', width: 10 }, // M (13) - 예금주
+                    { key: 'N', width: 20 }, // N (14) - 예금주와 관계 (Width Adjusted)
+                    { key: 'O', width: 20 }, // O (15) - 계좌번호
+                    { key: 'P', width: 45 }, // P (16) - 주소
+                    { key: 'Q', width: 8 },  // Q (17) - 숙소사용
+                    { key: 'R', width: 7 },  // R (18) - 혈액형
+                    { key: 'S', width: 12 }, // S (19) - 기종
+                    { key: 'T', width: 10 }, // T (20) - 건설경력
+                    { key: 'U', width: 10 }, // U (21) - 하이테크경력
+                    { key: 'V', width: 10 }, // V (22) - 장화감경력
+                    { key: 'W', width: 8 },  // W (23) - 평택거주
+                    { key: 'X', width: 20 }, // X (24) - 특이사항
+                ];
+
+                const borderStyle = {
+                    top: { style: 'thin' }, left: { style: 'thin' },
+                    bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+
+                // Row 1: Spacing
+                sheet.getRow(1).height = 15;
+
+                // Row 2: Title Merge (B2:W2 based on prompt request)
+                const titleRow = sheet.getRow(2);
+                titleRow.height = 30;
+                sheet.mergeCells('B2:W2');
+                const titleCell = sheet.getCell('B2');
+                titleCell.value = `[P5] ${titleDateStr} 사전교육명단`;
+                titleCell.font = { name: '맑은 고딕', size: 14, bold: true };
+                titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                // Row 3: Headers
+                const headers = {
+                    2: "No.", 3: "담당자", 4: "현장명", 5: "사전교육일", 6: "물산교육일", 7: "성별", 8: "성명",
+                    9: "주민번호", /* I and J will be merged */
+                    11: "전화번호", 12: "은행명", 13: "예금주", 14: "예금주와 관계", 15: "계좌번호", 16: "주소",
+                    17: "숙소사용", 18: "혈액형", 19: "기종", 20: "건설경력", 21: "하이테크경력", 22: "장화감 경력",
+                    23: "평택거주", 24: "특이사항"
+                };
+                
+                const headerRow = sheet.getRow(3);
+                headerRow.height = 20;
+
+                // Set values and styles for headers (B to X)
+                for (let c = 2; c <= 24; c++) {
+                    const cell = headerRow.getCell(c);
+                    if (headers[c]) cell.value = headers[c];
+                    
+                    cell.font = { name: '맑은 고딕', size: 10, bold: true };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    // Apply requested color #A9C9E9
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFA9C9E9' } }; 
+                    cell.border = borderStyle;
+                }
+                sheet.mergeCells('I3:J3'); // Merge header for 주민번호
+
+                // Row 4+: Write Data
+                dataMatrix.forEach((rowData, rIdx) => {
+                    const rowNum = rIdx + 4;
+                    const row = sheet.getRow(rowNum);
+                    row.height = 20;
+                    
+                    // Map HTML DOM array data to Excel Column indices
+                    const excelDataMap = {
+                        2: rowData[0],  3: rowData[1],   4: rowData[2],   5: rowData[3],   6: rowData[4],
+                        7: rowData[5],  8: rowData[6],   9: rowData[7],   10: rowData[8],
+                        11: rowData[9], 12: rowData[10], 13: rowData[11], 14: rowData[12], 15: rowData[13],
+                        16: rowData[14],17: rowData[15], 18: rowData[16], 19: rowData[17], 20: rowData[18],
+                        21: rowData[19],22: rowData[20], 23: rowData[21], 24: rowData[22]
+                    };
+
+                    for (let c = 2; c <= 24; c++) {
+                        const cell = row.getCell(c);
+                        if (excelDataMap[c] !== undefined) {
+                            cell.value = excelDataMap[c];
+                        }
+                        
+                        // Set text format for numbers to prevent scientific notation and warnings
+                        if ([9, 10, 11, 15].includes(c)) {
+                            cell.numFmt = '@';
+                        }
+                        
+                        cell.font = { name: '맑은 고딕', size: 10 };
+                        cell.border = borderStyle;
+                        cell.alignment = { vertical: 'middle', horizontal: (c === 16) ? 'left' : 'center' };
+                    }
+                });
+
+                // Generate File
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                
+                const fileName = `DHR_직영사전교육자명단_${fileDateSuffix}.xlsx`;
+                saveAs(blob, fileName);
+
+                showMsg('엑셀 다운로드가 완료되었습니다.');
+                alert('엑셀 다운로드가 완료되었습니다.');
+
+            } catch (error) {
+                showMsg('엑셀 파일 생성 중 오류가 발생했습니다.', true);
+                console.error(error);
+            }
+        });
+    </script>
+
+</body></html>
