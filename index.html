@@ -1,323 +1,442 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>직영 사전교육자 명단 변환기</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <title>사전교육자 명단 엑셀 변환기</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ExcelJS and FileSaver -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Malgun Gothic', dotum, sans-serif; background-color: #f4f6f9; padding: 20px; margin: 0; }
-        .container { max-width: 1400px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        h2 { color: #333; font-size: 20px; margin-top: 0; }
-        textarea { width: 100%; height: 200px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; resize: vertical; font-size: 14px; margin-bottom: 10px; }
-        .btn { padding: 12px 24px; font-weight: bold; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 10px; transition: 0.2s; }
-        .btn-blue { background-color: #0056b3; }
-        .btn-blue:hover { background-color: #004494; }
-        .btn-green { background-color: #28a745; opacity: 0.5; cursor: not-allowed; }
-        .btn-green.active { opacity: 1; cursor: pointer; }
-        .btn-green.active:hover { background-color: #218838; }
-        
-        .table-responsive { overflow-x: auto; margin-top: 25px; display: block; }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 13px; background-color: #fff; }
-        th, td { border: 1px solid #bbb; padding: 10px 8px; text-align: center; height: 20px; }
-        th { background-color: #a9c9e9; color: #111; font-weight: bold; }
-        .th-merged { letter-spacing: 2px; }
-        
-        td.editable { cursor: text; transition: 0.2s; }
-        td.editable:focus { outline: 2px solid #ffc107; background-color: #fff; }
-        .help-text { font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; display: block; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        td[contenteditable="true"] { outline: none; transition: background-color 0.2s; }
+        td[contenteditable="true"]:focus { background-color: #e0f2fe; box-shadow: inset 0 0 0 2px #3b82f6; }
     </style>
 </head>
-<body>
+<body class="text-gray-800 antialiased min-h-screen p-4 sm:p-6 flex flex-col items-center">
 
-<div class="container">
-    <h2>📋 직영 사전교육자 명단 자동 변환기</h2>
-    <span class="help-text">카카오톡으로 전달받은 텍스트 양식을 아래 빈칸에 모두 붙여넣고 변환 버튼을 누르세요.</span>
-    
-    <textarea id="inputText" placeholder="1. 성함 : &#10;2. 성별 : &#10;3. 나이 : &#10;... (이곳에 내용을 붙여넣으세요)"></textarea>
-    
-    <div>
-        <button class="btn btn-blue" onclick="processText()">데이터 변환 및 미리보기</button>
-        <button id="downloadBtn" class="btn btn-green" onclick="downloadExcel()" disabled>엑셀 다운로드</button>
-    </div>
+    <div class="w-full max-w-7xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-slate-800 px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-semibold text-white">📋 사전교육자 명단 엑셀 변환기</h1>
+                <p class="text-slate-300 text-sm mt-1">카카오톡 텍스트를 복사해 붙여넣으면 즉시 엑셀로 변환됩니다.</p>
+            </div>
+            <button id="downloadBtn" disabled class="bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-5 rounded shadow transition-colors flex items-center gap-2 opacity-50 cursor-not-allowed">
+                엑셀로 다운로드
+            </button>
+        </div>
 
-    <div class="table-responsive" id="tableContainer">
-        <table id="previewTable">
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>담당자<br>(수정가능)</th>
-                    <th>현장명<br>(수정가능)</th>
-                    <th>사전교육일</th>
-                    <th>물산교육일</th>
-                    <th>성별</th>
-                    <th>성명</th>
-                    <th colspan="2" class="th-merged">주민번호</th>
-                    <th>전화번호</th>
-                    <th>은행명</th>
-                    <th>예금주</th>
-                    <th>예금주와 관계</th>
-                    <th>계좌번호</th>
-                    <th>주소</th>
-                    <th>숙소사용</th>
-                    <th>혈액형</th>
-                    <th>기종</th>
-                    <th>건설경력</th>
-                    <th>하이테크경력</th>
-                    <th>장화감 경력</th>
-                    <th>평택거주</th>
-                    <th>특이사항<br>(수정가능)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 초기 로딩 시 빈칸 10줄 렌더링 -->
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    let globalData = [];
-    let maxDateObj = new Date(0);
-
-    window.onload = function() {
-        const tbody = document.querySelector('#previewTable tbody');
-        tbody.innerHTML = '';
-        for(let i=1; i<=10; i++) {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${i}</td>
-                    <td class="editable"></td><td class="editable"></td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td>
-                    <td></td><td></td><td></td><td></td><td></td><td style="text-align:left;"></td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td>
-                    <td></td><td class="editable"></td>
-                </tr>
-            `;
-        }
-    };
-
-    function processText() {
-        const text = document.getElementById('inputText').value;
-        if (!text.trim()) return alert("변환할 텍스트를 입력해주세요.");
-
-        const people = text.split(/(?=1\.\s*성함\s*:)/).filter(p => p.trim().length > 0);
-        globalData = [];
-        maxDateObj = new Date(0);
-
-        people.forEach((pStr, index) => {
-            const lines = pStr.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            
-            let dataMap = {};
-            let currentKey = "";
-
-            lines.forEach(line => {
-                const match = line.match(/^(\d+)\.\s*([^:]+)\s*:\s*(.*)/);
-                if (match) {
-                    currentKey = match[2].replace(/\s+/g, '');
-                    dataMap[currentKey] = match[3].trim();
-                } else if (currentKey) {
-                    dataMap[currentKey] += " " + line; 
-                }
-            });
-
-            const name = dataMap['성함'] || '';
-            const gender = (dataMap['성별'] || '').includes('여') ? '여' : '남';
-            
-            const juminRaw = (dataMap['주민번호(뒷자리포함)'] || dataMap['주민번호'] || '').replace(/[^0-9]/g, '');
-            const jumin1 = juminRaw.substring(0, 6);
-            const jumin2 = juminRaw.substring(6, 13);
-            
-            const phone = dataMap['연락처'] || '';
-            
-            const accRaw = (dataMap['계좌번호(본인)'] || dataMap['계좌번호'] || '').trim();
-            let bank = '';
-            const bankMatch = accRaw.match(/^([가-힣a-zA-Z\s]+)/); 
-            if (bankMatch) {
-                bank = bankMatch[1].replace(/\s+/g, '');
-                if (bank.includes('카카오')) bank = '카카오';
-            }
-            const accNum = accRaw.replace(/[^\d-]/g, '').replace(/^-+|-+$/g, '');
-
-            const address = dataMap['주소'] || '';
-            const isPyeongtaek = address.includes('평택') ? 'O' : 'X';
-            const isDorm = (dataMap['숙소or출퇴근'] || '').includes('숙소') ? 'O' : 'X';
-            const bloodRaw = dataMap['혈액형'] || '';
-            const blood = bloodRaw ? 'RH+' + bloodRaw.toUpperCase().replace('RH+', '') : '';
-
-            const dateStr = dataMap['투입가능일자'] || '';
-            let parsedDate = new Date();
-            const dateMatch = dateStr.match(/(\d+)월\s*(\d+)일/);
-            if(dateMatch) {
-                const y = new Date().getFullYear();
-                parsedDate = new Date(y, parseInt(dateMatch[1])-1, parseInt(dateMatch[2]));
-                if (parsedDate > maxDateObj) maxDateObj = parsedDate;
-            }
-
-            globalData.push({
-                no: index + 1,
-                manager: '송상엽',
-                site: 'P5',
-                eduDate: dateStr,
-                eduDateObj: parsedDate,
-                gender: gender,
-                name: name,
-                jumin1: jumin1,
-                jumin2: jumin2,
-                phone: phone,
-                bank: bank,
-                accName: name, 
-                accRel: '본인',
-                accNum: accNum,
-                address: address,
-                dorm: isDorm,
-                blood: blood,
-                phoneModel: dataMap['핸드폰기종'] || '',
-                expCon: dataMap['타건설현장경력'] || dataMap['타건설현장력'] || '',
-                expHigh: dataMap['삼성건설현장경력'] || '',
-                expFire: dataMap['화기감시자경력'] || '',
-                pyeongtaek: isPyeongtaek,
-                note: '' 
-            });
-        });
-
-        renderTable();
-    }
-
-    function renderTable() {
-        const tbody = document.querySelector('#previewTable tbody');
-        tbody.innerHTML = '';
-        
-        if(globalData.length > 0) {
-            const btn = document.getElementById('downloadBtn');
-            btn.disabled = false;
-            btn.classList.add('active');
-        }
-
-        globalData.forEach((row, i) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${row.no}</td>
-                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'manager', this.innerText)">${row.manager}</td>
-                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'site', this.innerText)">${row.site}</td>
-                <td>${row.eduDate}</td>
-                <td></td>
-                <td>${row.gender}</td>
-                <td>${row.name}</td>
-                <td>${row.jumin1}</td>
-                <td>${row.jumin2}</td>
-                <td>${row.phone}</td>
-                <td>${row.bank}</td>
-                <td>${row.accName}</td>
-                <td>${row.accRel}</td>
-                <td>${row.accNum}</td>
-                <td style="text-align:left;">${row.address}</td>
-                <td>${row.dorm}</td>
-                <td>${row.blood}</td>
-                <td>${row.phoneModel}</td>
-                <td>${row.expCon}</td>
-                <td>${row.expHigh}</td>
-                <td>${row.expFire}</td>
-                <td>${row.pyeongtaek}</td>
-                <td class="editable" contenteditable="true" onblur="updateField(${i}, 'note', this.innerText)">${row.note}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function updateField(index, key, value) {
-        globalData[index][key] = value.trim();
-    }
-
-    async function downloadExcel() {
-        if(globalData.length === 0) return alert('변환할 데이터가 없습니다.');
-        
-        try {
-            // 가장 안정적이었던 원본 템플릿 파일 지정 (이 파일이 Github에 있어야 합니다)
-            const response = await fetch('./DHR_직영사전교육자명단_20260930_1.xlsx'); 
-            if(!response.ok) throw new Error('Template file not found.');
-            
-            const arrayBuffer = await response.arrayBuffer();
-            const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(arrayBuffer);
-            const worksheet = workbook.worksheets[0];
-
-            const m = maxDateObj.getMonth() + 1;
-            const d = maxDateObj.getDate();
-            worksheet.name = `${m}월 ${d}일`;
-
-            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-            const titleDateStr = `${maxDateObj.getFullYear()}년 ${String(m).padStart(2,'0')}월 ${String(d).padStart(2,'0')}일 (${days[maxDateObj.getDay()]})`;
-            
-            // XML 오류 방지를 위해 템플릿의 셀 병합 및 너비를 일절 건드리지 않고 값만 입력
-            const titleCell = worksheet.getCell('B2');
-            titleCell.value = `[P5] ${titleDateStr} 사전교육명단`;
-
-            let currentRow = 4;
-            globalData.forEach(row => {
-                worksheet.getCell(`B${currentRow}`).value = row.no;
-                worksheet.getCell(`C${currentRow}`).value = row.manager;
-                worksheet.getCell(`D${currentRow}`).value = row.site;
-                worksheet.getCell(`E${currentRow}`).value = row.eduDateObj; 
-                worksheet.getCell(`F${currentRow}`).value = '';
-                worksheet.getCell(`G${currentRow}`).value = row.gender;
-                worksheet.getCell(`H${currentRow}`).value = row.name;
-
-                const cellI = worksheet.getCell(`I${currentRow}`);
-                cellI.value = row.jumin1;
-                cellI.numFmt = '@'; 
+        <div class="p-6 flex flex-col gap-6">
+            <!-- Text Input Area -->
+            <div>
+                <label for="rawInput" class="block text-sm font-medium text-slate-700 mb-2">텍스트 데이터 입력</label>
+                <textarea id="rawInput" rows="8" placeholder="1. 성함 : 홍길동
+2. 성별 : 남
+... (양식 텍스트를 여기에 붙여넣으세요)" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-y text-sm font-mono"></textarea>
                 
-                const cellJ = worksheet.getCell(`J${currentRow}`);
-                cellJ.value = row.jumin2;
-                cellJ.numFmt = '@';
+                <div class="mt-3 flex justify-between items-center">
+                    <div id="statusMsg" class="text-sm font-medium py-1 px-3 rounded bg-blue-50 text-blue-600 hidden"></div>
+                    <button id="parseBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition-colors ml-auto">
+                        데이터 변환 및 미리보기 ↓
+                    </button>
+                </div>
+            </div>
 
-                const cellK = worksheet.getCell(`K${currentRow}`);
-                cellK.value = row.phone;
-                cellK.numFmt = '@';
+            <!-- Table Preview Section -->
+            <div class="border border-slate-200 rounded-lg overflow-hidden flex flex-col">
+                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                    <span class="text-sm font-semibold text-slate-700">미리보기 (셀을 클릭하여 직접 수정할 수 있습니다)</span>
+                    <span id="rowCount" class="text-xs bg-slate-200 text-slate-600 py-1 px-2 rounded">0 명</span>
+                </div>
+                <div class="overflow-x-auto" style="max-height: 500px;">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">No.</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">담당자</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">현장명</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">사전교육일</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">물산교육일</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성별</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">성명</th>
+                                <th colspan="2" class="px-3 py-2 text-center font-medium text-slate-600 border-r">주민번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">전화번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">은행명</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">예금주</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">관계</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">계좌번호</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">주소</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">숙소사용</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">혈액형</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">기종</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">건설경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">하이테크경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">장화감경력</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600 border-r">평택거주</th>
+                                <th class="px-3 py-2 text-center font-medium text-slate-600">특이사항</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white divide-y divide-slate-100">
+                            <!-- 초기 빈칸 10줄 렌더링 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                worksheet.getCell(`L${currentRow}`).value = row.bank;
-                worksheet.getCell(`M${currentRow}`).value = row.accName;
-                worksheet.getCell(`N${currentRow}`).value = row.accRel;
+    <script>
+        const rawInput = document.getElementById('rawInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const tableBody = document.getElementById('tableBody');
+        const rowCount = document.getElementById('rowCount');
+        const statusMsg = document.getElementById('statusMsg');
 
-                const cellO = worksheet.getCell(`O${currentRow}`);
-                cellO.value = row.accNum;
-                cellO.numFmt = '@';
-
-                worksheet.getCell(`P${currentRow}`).value = row.address;
-                worksheet.getCell(`Q${currentRow}`).value = row.dorm;
-                worksheet.getCell(`R${currentRow}`).value = row.blood;
-                worksheet.getCell(`S${currentRow}`).value = row.phoneModel;
-                worksheet.getCell(`T${currentRow}`).value = row.expCon;
-                worksheet.getCell(`U${currentRow}`).value = row.expHigh;
-                worksheet.getCell(`V${currentRow}`).value = row.expFire;
-                worksheet.getCell(`W${currentRow}`).value = row.pyeongtaek;
-                worksheet.getCell(`X${currentRow}`).value = row.note;
-
-                currentRow++;
-            });
-
-            // ⚠️ 엑셀 구조를 변경하여 파일을 깨뜨리는 모든 코드 삭제 완료 ⚠️
-
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            
-            const yyyy = maxDateObj.getFullYear();
-            const mm = String(m).padStart(2, '0');
-            const dd = String(d).padStart(2, '0');
-            const fileName = `DHR_직영사전교육자명단_${yyyy}${mm}${dd}.xlsx`;
-            
-            saveAs(blob, fileName);
-
-            setTimeout(() => {
-                alert('엑셀 다운로드가 완료되었습니다!');
-            }, 500);
-
-        } catch (error) {
-            console.error(error);
-            alert("⚠️ 엑셀 템플릿(DHR_직영사전교육자명단_20260930_1.xlsx) 파일을 찾을 수 없습니다!");
+        // 초기 화면에 빈 표 10개 출력
+        function renderEmptyRows() {
+            tableBody.innerHTML = '';
+            for(let i=1; i<=10; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-3 py-2 border-r border-slate-100 text-center">${i}</td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center" contenteditable="true"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center" contenteditable="true"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-left"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 border-r border-slate-100 text-center"></td>
+                    <td class="px-3 py-2 text-center" contenteditable="true"></td>
+                `;
+                tableBody.appendChild(tr);
+            }
         }
-    }
-</script>
-</body>
-</html>
+        
+        window.onload = renderEmptyRows;
+
+        function showMsg(msg, isError = false) {
+            statusMsg.textContent = msg;
+            statusMsg.className = `text-sm font-medium py-1 px-3 rounded ${isError ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`;
+            statusMsg.classList.remove('hidden');
+            setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+        }
+
+        function parseDateString(dateStr) {
+            const match = dateStr.match(/(\d+)월\s*(\d+)일/);
+            if (match) {
+                const month = match[1].padStart(2, '0');
+                const day = match[2].padStart(2, '0');
+                return `2026-${month}-${day}`;
+            }
+            return dateStr;
+        }
+
+        function getKoreanDayOfWeek(dateStr) {
+            try {
+                const date = new Date(dateStr);
+                const days = ['일', '월', '화', '수', '목', '금', '토'];
+                return days[date.getDay()];
+            } catch(e) { return ''; }
+        }
+
+        parseBtn.addEventListener('click', () => {
+            const text = rawInput.value.trim();
+            if (!text) {
+                showMsg('입력된 텍스트가 없습니다.', true);
+                return;
+            }
+
+            try {
+                // '1. 성함'을 기준으로 분리하여 중간에 엔터가 있어도 쪼개지지 않음
+                const blocks = text.split(/(?=1\.\s*성함\s*:)/).filter(b => b.trim().length > 0);
+                tableBody.innerHTML = ''; 
+                let parsedCount = 0;
+
+                blocks.forEach((block, index) => {
+                    // 키워드 공백을 무시하는 정규식으로 오타 방어
+                    const extract = (regex) => {
+                        const match = block.match(regex);
+                        return match ? match[1].trim() : '';
+                    };
+
+                    const name = extract(/1\.\s*성함\s*:\s*([^\n\r]+)/);
+                    if (!name) return; 
+
+                    let gender = extract(/2\.\s*성별\s*:\s*([^\n\r]+)/);
+                    gender = gender.includes('여') ? '여' : (gender.includes('남') ? '남' : gender);
+
+                    let ssn1 = '', ssn2 = '';
+                    const ssnMatch = block.match(/4\.\s*주민번호.*?\s*:\s*(\d{6})\s*-\s*(\d{7})/);
+                    if (ssnMatch) {
+                        ssn1 = ssnMatch[1];
+                        ssn2 = ssnMatch[2];
+                    }
+
+                    const phone = extract(/5\.\s*연락처\s*:\s*([^\n\r]+)/);
+                    const address = extract(/6\.\s*주소\s*:\s*([^\n\r]+)/);
+                    const pyeongtaek = address.includes('평택') ? 'O' : 'X';
+                    
+                    let blood = extract(/7\.\s*혈액형\s*:\s*([^\n\r]+)/);
+                    blood = blood ? (blood.toUpperCase().startsWith('RH+') ? blood : `RH+${blood.toUpperCase()}`) : '';
+
+                    const phoneModel = extract(/8\.\s*핸드폰기종\s*:\s*([^\n\r]+)/);
+                    
+                    const rawBank = extract(/10\.\s*계좌번호.*?\s*:\s*([^\n\r]+)/);
+                    let bankName = '', accountNum = '';
+                    if (rawBank) {
+                        const bMatch = rawBank.match(/^([가-힣a-zA-Z\s]+)([\d-]+)$/);
+                        if (bMatch) {
+                            bankName = bMatch[1].replace(/\s+/g, '');
+                            if (bankName.includes('카카오')) bankName = '카카오';
+                            accountNum = bMatch[2];
+                        } else {
+                            const words = rawBank.split(' ');
+                            if(words.length > 1) {
+                                bankName = words[0];
+                                accountNum = words[1];
+                            }
+                        }
+                    }
+
+                    let accomm = extract(/12\.\s*숙소or출퇴근\s*:\s*([^\n\r]+)/);
+                    accomm = accomm.includes('숙소') ? 'O' : 'X';
+
+                    let availDate = extract(/13\.\s*투입가능일자\s*:\s*([^\n\r]+)/);
+                    availDate = parseDateString(availDate);
+
+                    // 공백 없이 검색하여 '경'자가 빠져도 찾도록 함
+                    const cleanBlock = block.replace(/\s+/g, '');
+                    
+                    let fwExp = '';
+                    const fwMatch = cleanBlock.match(/15\.화기감시자경?력:([^\d]+)/);
+                    if(fwMatch) fwExp = fwMatch[1].replace(/16\..*/, ''); // 다음 항목 전까지 자름
+
+                    let ssExp = '';
+                    const ssMatch = cleanBlock.match(/16\.삼성건설현장경?력:([^\d]+)/);
+                    if(ssMatch) ssExp = ssMatch[1].replace(/17\..*/, '');
+
+                    let otherExp = '';
+                    const oMatch = cleanBlock.match(/17\.타건설현장경?력:([^\d]+)/);
+                    if(oMatch) otherExp = oMatch[1];
+
+                    const rowData = [
+                        index + 1, "송상엽", "P5", availDate, "", gender, name, 
+                        ssn1, ssn2, phone, bankName, name, "본인", accountNum, 
+                        address, accomm, blood, phoneModel, otherExp, ssExp, fwExp, pyeongtaek, ""
+                    ];
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50 transition-colors";
+                    
+                    rowData.forEach((val, colIdx) => {
+                        const td = document.createElement('td');
+                        td.className = "px-3 py-2 border-r border-slate-100 focus:bg-blue-50";
+                        td.textContent = val;
+                        td.contentEditable = "true";
+                        
+                        if (colIdx === 14) td.classList.add('text-left');
+                        else td.classList.add('text-center');
+
+                        tr.appendChild(td);
+                    });
+
+                    tableBody.appendChild(tr);
+                    parsedCount++;
+                });
+
+                if (parsedCount > 0) {
+                    rowCount.textContent = `${parsedCount} 명`;
+                    downloadBtn.disabled = false;
+                    downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    showMsg('성공적으로 변환되었습니다. 내용을 확인 및 수정 후 다운로드하세요.');
+                } else {
+                    renderEmptyRows();
+                    showMsg('변환할 데이터를 찾지 못했습니다. 양식을 확인해주세요.', true);
+                }
+
+            } catch (err) {
+                showMsg('데이터 변환 중 오류가 발생했습니다.', true);
+                console.error(err);
+            }
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            try {
+                showMsg('엑셀 파일을 생성 중입니다...');
+                
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                if (rows.length === 0 || rows[0].id === 'emptyRow') return;
+
+                const dataMatrix = rows.map(tr => {
+                    const cells = Array.from(tr.querySelectorAll('td'));
+                    return cells.map(td => td.innerText.trim());
+                });
+
+                let latestDateObj = null;
+                let latestDateStr = '';
+                
+                dataMatrix.forEach(row => {
+                    const dStr = row[3]; 
+                    if (dStr) {
+                        const dObj = new Date(dStr);
+                        if (!latestDateObj || dObj > latestDateObj) {
+                            latestDateObj = dObj;
+                            latestDateStr = dStr;
+                        }
+                    }
+                });
+
+                let fileDateSuffix = 'YYYYMMDD';
+                let sheetName = '시트1';
+                let titleDateStr = 'YYYY년 MM월 DD일 (요일)';
+
+                if (latestDateObj && !isNaN(latestDateObj)) {
+                    const y = latestDateObj.getFullYear();
+                    const m = String(latestDateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(latestDateObj.getDate()).padStart(2, '0');
+                    const kDay = getKoreanDayOfWeek(latestDateStr);
+
+                    fileDateSuffix = `${y}${m}${d}`;
+                    sheetName = `${latestDateObj.getMonth() + 1}월 ${latestDateObj.getDate()}일`;
+                    titleDateStr = `${y}년 ${m}월 ${d}일 (${kDay}요일)`;
+                }
+
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet(sheetName, {
+                    properties: { tabColor: { argb: 'FFC0000' } },
+                    views: [{ showGridLines: true }]
+                });
+
+                // 열 너비 설정 (글자 잘림 방지 반영)
+                sheet.columns = [
+                    { key: 'A', width: 3 },  
+                    { key: 'B', width: 5 },  
+                    { key: 'C', width: 10 }, 
+                    { key: 'D', width: 6 },  
+                    { key: 'E', width: 14 }, // 늘림
+                    { key: 'F', width: 12 }, 
+                    { key: 'G', width: 5 },  
+                    { key: 'H', width: 10 }, 
+                    { key: 'I', width: 9 },  
+                    { key: 'J', width: 9 },  
+                    { key: 'K', width: 15 }, 
+                    { key: 'L', width: 12 }, 
+                    { key: 'M', width: 10 }, 
+                    { key: 'N', width: 15 }, // 늘림
+                    { key: 'O', width: 22 }, // 늘림
+                    { key: 'P', width: 45 }, // 늘림
+                    { key: 'Q', width: 8 },  
+                    { key: 'R', width: 7 },  
+                    { key: 'S', width: 12 }, 
+                    { key: 'T', width: 10 }, 
+                    { key: 'U', width: 10 }, 
+                    { key: 'V', width: 10 }, 
+                    { key: 'W', width: 8 },  
+                    { key: 'X', width: 20 }, 
+                ];
+
+                const borderStyle = {
+                    top: { style: 'thin' }, left: { style: 'thin' },
+                    bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+
+                sheet.getRow(1).height = 15;
+
+                const titleRow = sheet.getRow(2);
+                titleRow.height = 30;
+                sheet.mergeCells('B2:W2');
+                const titleCell = sheet.getCell('B2');
+                titleCell.value = `[P5] ${titleDateStr} 사전교육명단`;
+                titleCell.font = { name: '맑은 고딕', size: 14, bold: true };
+                titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                const headers = {
+                    2: "No.", 3: "담당자", 4: "현장명", 5: "사전교육일", 6: "물산교육일", 7: "성별", 8: "성명",
+                    9: "주민번호", 11: "전화번호", 12: "은행명", 13: "예금주", 14: "예금주와 관계", 15: "계좌번호", 16: "주소",
+                    17: "숙소사용", 18: "혈액형", 19: "기종", 20: "건설경력", 21: "하이테크경력", 22: "장화감 경력",
+                    23: "평택거주", 24: "특이사항"
+                };
+                
+                const headerRow = sheet.getRow(3);
+                headerRow.height = 20;
+
+                for (let c = 2; c <= 24; c++) {
+                    const cell = headerRow.getCell(c);
+                    if (headers[c]) cell.value = headers[c];
+                    
+                    cell.font = { name: '맑은 고딕', size: 10, bold: true };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFA9C9E9' } }; 
+                    cell.border = borderStyle;
+                }
+                sheet.mergeCells('I3:J3'); 
+
+                dataMatrix.forEach((rowData, rIdx) => {
+                    const rowNum = rIdx + 4;
+                    const row = sheet.getRow(rowNum);
+                    row.height = 20;
+                    
+                    const excelDataMap = {
+                        2: rowData[0],  3: rowData[1],   4: rowData[2],   5: rowData[3],   6: rowData[4],
+                        7: rowData[5],  8: rowData[6],   9: rowData[7],   10: rowData[8],
+                        11: rowData[9], 12: rowData[10], 13: rowData[11], 14: rowData[12], 15: rowData[13],
+                        16: rowData[14],17: rowData[15], 18: rowData[16], 19: rowData[17], 20: rowData[18],
+                        21: rowData[19],22: rowData[20], 23: rowData[21], 24: rowData[22]
+                    };
+
+                    for (let c = 2; c <= 24; c++) {
+                        const cell = row.getCell(c);
+                        if (excelDataMap[c] !== undefined) {
+                            cell.value = excelDataMap[c];
+                        }
+                        
+                        if ([9, 10, 11, 15].includes(c)) {
+                            cell.numFmt = '@';
+                        }
+                        
+                        cell.font = { name: '맑은 고딕', size: 10 };
+                        cell.border = borderStyle;
+                        cell.alignment = { vertical: 'middle', horizontal: (c === 16) ? 'left' : 'center' };
+                    }
+                });
+
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                
+                const fileName = `DHR_직영사전교육자명단_${fileDateSuffix}.xlsx`;
+                saveAs(blob, fileName);
+
+                showMsg('엑셀 다운로드가 완료되었습니다.');
+                alert('엑셀 다운로드가 완료되었습니다.');
+
+            } catch (error) {
+                showMsg('엑셀 파일 생성 중 오류가 발생했습니다.', true);
+                console.error(error);
+            }
+        });
+    </script>
+
+</body></html>
