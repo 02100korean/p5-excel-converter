@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <!-- 모바일/태블릿 전용 다운로드 링크 영역 (자동 다운로드 차단 시 클릭용) -->
+        <!-- 모바일/태블릿 전용 다운로드 링크 영역 -->
         <div id="mobileDownloadContainer" class="px-6 py-3 bg-emerald-50 border-b border-emerald-200 hidden flex items-center justify-between">
             <span class="text-sm font-medium text-emerald-800">📱 모바일 브라우저에서 자동 다운로드가 차단된 경우 아래 버튼을 터치하세요!</span>
             <a id="mobileDownloadLink" href="#" download="" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-2 px-4 rounded shadow transition-colors">
@@ -236,19 +236,20 @@
                     let availDate = extract(/13\.\s*투입가능일자\s*:\s*([^\n\r]+)/);
                     availDate = parseDateString(availDate);
 
+                    // 경력 기간(숫자 포함)이 잘리지 않도록 공백 제거 후 다음 항목 번호 전까지 안전하게 추출
                     const cleanBlock = block.replace(/\s+/g, '');
                     
                     let fwExp = '';
-                    const fwMatch = cleanBlock.match(/15\.화기감시자경?력:([^\d]+)/);
-                    if(fwMatch) fwExp = fwMatch[1].replace(/16\..*/, '');
+                    const fwMatch = cleanBlock.match(/15\.화기감시자경?력:([^1]+?)(?=16\.|$)/);
+                    if(fwMatch) fwExp = fwMatch[1].trim();
 
                     let ssExp = '';
-                    const ssMatch = cleanBlock.match(/16\.삼성건설현장경?력:([^\d]+)/);
-                    if(ssMatch) ssExp = ssMatch[1].replace(/17\..*/, '');
+                    const ssMatch = cleanBlock.match(/16\.삼성건설현장경?력:([^1]+?)(?=17\.|$)/);
+                    if(ssMatch) ssExp = ssMatch[1].trim();
 
                     let otherExp = '';
-                    const oMatch = cleanBlock.match(/17\.타건설현장경?력:([^\d]+)/);
-                    if(oMatch) otherExp = oMatch[1];
+                    const oMatch = cleanBlock.match(/17\.타건설현장경?력:(.+)/);
+                    if(oMatch) otherExp = oMatch[1].trim();
 
                     const rowData = [
                         index + 1, "송상엽", "P5", availDate, "", gender, name, 
@@ -435,10 +436,8 @@
                 
                 const fileName = `DHR_직영사전교육자명단_${fileDateSuffix}.xlsx`;
                 
-                // PC 및 모바일 공용 다운로드 처리
                 saveAs(blob, fileName);
 
-                // 모바일 브라우저 차단 대비용 다운로드 링크 활성화
                 const blobUrl = URL.createObjectURL(blob);
                 mobileDownloadLink.href = blobUrl;
                 mobileDownloadLink.download = fileName;
